@@ -11,19 +11,9 @@ LOG = helpers.get_logger(__name__)
 
 class Provisioning:
     """Provisioning related functionality for PowerStore."""
-
-    def __init__(
-        self,
-        server_ip,
-        username,
-        password,
-        verify,
-        application_type,
-        timeout,
-        enable_log=False,
-        port_no=None,
-    ):
-        """Initializes Provisioning Class
+    def __init__(self, server_ip, username, password, verify,
+                 application_type, timeout, enable_log=False, port_no=None, proxies=None):
+        """ Initializes Provisioning Class
 
         :param server_ip: The array IP
         :type server_ip: str
@@ -47,9 +37,8 @@ class Provisioning:
         if port_no is None:
             port_no = 443
         self.server_ip = server_ip + ":" + str(port_no)
-        self.client = Client(
-            username, password, verify, application_type, timeout, enable_log=enable_log,
-        )
+        self.client = Client(username, password, verify, application_type,
+                             timeout, enable_log=enable_log, proxies=proxies)
         LOG = helpers.get_logger(__name__, enable_log=enable_log)
         helpers.set_provisioning_obj(self)
 
