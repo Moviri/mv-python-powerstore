@@ -510,7 +510,7 @@ REPLICATION_GROUP_QUERY = {
 
 # LOGIN_SESSION details
 LOGIN_SESSION_DETAILS_QUERY = {
-    "select": "id,user,role_ids,is_password_change_required,is_built_in_user,idle_timeout", # pylint: disable=line-too-long
+    "select": "id,user_id,user,role_ids,is_password_change_required,is_built_in_user,user_type,idle_timeout", # pylint: disable=line-too-long
 }
 
 # LDAP Account details
@@ -846,6 +846,3 @@ GET_STORAGE_CONTAINER_DESTINATION_DETAILS_URL = (
 )
 CREATE_STORAGE_CONTAINER_DESTINATION_URL = GET_STORAGE_CONTAINER_DESTINATION_LIST_URL
 DELETE_STORAGE_CONTAINER_DESTINATION_URL = GET_STORAGE_CONTAINER_DESTINATION_DETAILS_URL
-
-GET_PERFORMANCE_METRICS_URL = (
-    "https://{""0}/api/rest/metrics/generate")

@@ -2,28 +2,18 @@
 
 """Helper module for PowerStore"""
 
-# pylint: disable=global-statement,too-many-boolean-expressions,too-many-branches
-
 import logging
 
 from pkg_resources import parse_version
 
 from PyPowerStore.utils import constants
 
-PROVISIONING_OBJ = None
+provisioning_obj = None
 
 
 def set_provisioning_obj(val):
-    """
-    Sets the provisioning object.
-
-    :param val: The value of the provisioning object.
-    :type val: object
-    :return: None
-    :rtype: None
-    """
-    global PROVISIONING_OBJ # Reset PROVISIONING_OBJ based on param
-    PROVISIONING_OBJ = val
+    global provisioning_obj
+    provisioning_obj = val
 
 
 def prepare_querystring(*query_arguments, **kw_query_arguments):
@@ -51,13 +41,13 @@ def get_logger(module_name, enable_log=False):
     :return: Logger object
     :rtype: logging.Logger
     """
-    log = logging.getLogger(module_name)
-    log.setLevel(logging.DEBUG)
+    LOG = logging.getLogger(module_name)
+    LOG.setLevel(logging.DEBUG)
     if enable_log:
-        log.disabled = False
+        LOG.disabled = False
     else:
-        log.disabled = True
-    return log
+        LOG.disabled = True
+    return LOG
 
 
 def is_foot_hill_or_higher():
@@ -66,7 +56,7 @@ def is_foot_hill_or_higher():
     :return: True if foot hill or higher
     :rtype: bool
     """
-    array_version = PROVISIONING_OBJ.get_array_version()
+    array_version = provisioning_obj.get_array_version()
     if array_version and (
         parse_version(array_version[0:7]) >= parse_version(constants.FOOTHILL_VERSION)
     ):
@@ -80,7 +70,7 @@ def is_malka_or_higher():
     :return: True if array version is Malka or higher
     :rtype: bool
     """
-    array_version = PROVISIONING_OBJ.get_array_version()
+    array_version = provisioning_obj.get_array_version()
     if array_version and (
         parse_version(array_version[0:7]) >= parse_version(constants.MALKA_VERSION)
     ):
@@ -94,7 +84,7 @@ def is_foot_hill_prime_or_higher():
     :return: True if foothill prime or higher
     :rtype: bool
     """
-    array_version = PROVISIONING_OBJ.get_array_version()
+    array_version = provisioning_obj.get_array_version()
     if array_version and (
         parse_version(array_version[0:7])
         >= parse_version(constants.FOOTHILL_PRIME_VERSION)
@@ -109,7 +99,7 @@ def is_victory_or_higher():
     :return: True if victory or higher
     :rtype: bool
     """
-    array_version = PROVISIONING_OBJ.get_array_version()
+    array_version = provisioning_obj.get_array_version()
     if array_version and (
         parse_version(array_version[0:7]) >= parse_version(constants.VICTORY_VERSION)
     ):
@@ -142,7 +132,7 @@ def filtered_details(filterable_keys, filter_dict, resource_list, resource_name)
         for key in filter_dict:
             # Check if the filters can be applied on the key or not
             if key not in filterable_keys:
-                raise KeyError(
+                raise Exception(
                     err_msg.format(key, resource_name, str(filterable_keys)),
                 )
             count = apply_operators(filter_dict, key, resource, count)
@@ -186,7 +176,7 @@ def apply_operators(filter_dict, key, resource, count):
         count += 1
     elif split_list[0] == "ilike":
         if not isinstance(resource[key], str):
-            raise TypeError(
+            raise Exception(
                 "like can be applied on string type"
                 " parameters only. Please enter a valid operator"
                 " and parameter combination",
@@ -202,7 +192,7 @@ def apply_operators(filter_dict, key, resource, count):
             count += 1
     elif split_list[0] == "gt":
         if not isinstance(resource[key], (int, float)):
-            raise TypeError(
+            raise Exception(
                 "greater can be applied on int type"
                 " parameters only. Please enter a valid operator"
                 " and parameter combination",
@@ -213,7 +203,7 @@ def apply_operators(filter_dict, key, resource, count):
             count += 1
     elif split_list[0] == "lt":
         if not isinstance(resource[key], (int, float)):
-            raise TypeError(
+            raise Exception(
                 "lesser can be applied on int type"
                 " parameters only. Please enter a valid operator"
                 " and parameter combination",
