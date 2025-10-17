@@ -2,20 +2,20 @@
 
 """Client module for PowerStore"""
 
+# pylint: disable=too-many-instance-attributes,too-many-arguments,too-many-positional-arguments,no-member,too-many-nested-blocks,too-many-branches,global-statement
+
 import base64
 import json
-import socket
 import time
 
 import requests
-from requests.exceptions import ConnectionError, SSLError, Timeout, TooManyRedirects
+from requests.exceptions import SSLError, Timeout, TooManyRedirects
 
 from PyPowerStore.utils import constants, helpers
 from PyPowerStore.utils.exception import PowerStoreException
 
 requests.packages.urllib3.disable_warnings()
 
-# TODO: kept LOG as global for now will improve it to avoid overriding
 LOG = helpers.get_logger(__name__)
 
 # Codes
@@ -27,17 +27,9 @@ class AuthenticationManager:
     """Manage the powerstore authentication"""
 
     def __init__(
-        self,
-        username,
-        password,
-        verify,
-        application_type,
-        timeout,
-        host=None,
-        proxies=None,
+        self, username, password, verify, application_type, timeout, host=None,
     ):
-        """
-        Initializes AuthenticationManager
+        """Initializes AuthenticationManager
 
         :param username: array username
         :type username: str
@@ -58,7 +50,6 @@ class AuthenticationManager:
         self.verify = verify
         self.application_type = application_type
         self.timeout = timeout
-        self.proxies = proxies
         self.host = host
         self.dell_emc_token = None
         self.cookie = None
@@ -78,9 +69,7 @@ class AuthenticationManager:
     def get_authorization(self):
         """Get the authorization header"""
         credentials = base64.b64encode(
-            "{username}:{password}".format(
-                username=self.username, password=self.password
-            ).encode()
+            f"{self.username}:{self.password}".encode(),
         )
         return {"authorization": "Basic " + credentials.decode()}
 
@@ -120,7 +109,6 @@ class AuthenticationManager:
             verify=self.verify,
             timeout=self.timeout,
             params=constants.LOGIN_SESSION_DETAILS_QUERY,
-            proxies=self.proxies,
         )
         self.set_session_timeout_and_creation_time(response)
         self.dell_emc_token = response.headers.get("DELL-EMC-TOKEN")
@@ -150,7 +138,6 @@ class AuthenticationManager:
             verify=self.verify,
             data=None,
             timeout=self.timeout,
-            proxies=self.proxies,
         )
         self.dell_emc_token = None
         self.cookie = None
@@ -167,7 +154,6 @@ class Client:
         application_type,
         timeout=None,
         enable_log=False,
-        proxies=None,
     ):
         """Initializes Client Class
 
@@ -185,12 +171,10 @@ class Client:
         :type enable_log: bool
         :type timeout: float
         """
-        global LOG
         self.username = username
         self.password = password
         self.verify = verify
         self.application_type = application_type
-        self.proxies = proxies
         """Setting default timeout"""
         self.timeout = timeout if timeout else constants.TIMEOUT
         self.auth_manager = AuthenticationManager(
@@ -199,12 +183,12 @@ class Client:
             self.verify,
             self.application_type,
             self.timeout,
-            self.proxies,
         )
+        global LOG # Reset LOG based on param
         LOG = helpers.get_logger(__name__, enable_log=enable_log)
 
     def fetch_response(
-        self, http_method, url, payload=None, querystring=None, myrange=None
+        self, http_method, url, payload=None, querystring=None, myrange=None,
     ):
         """Fetch & return the response based on request parameters.
 
@@ -238,9 +222,8 @@ class Client:
             headers.update(auth_headers)
 
         LOG.debug(
-            "Request's http_method: '%s' url: '%s' payload: '%s' "
-            "querystring: '%s' myrange: '%s'"
-            % (http_method, url, payload, querystring, myrange)
+            "Request's http_method: '%s' url: '%s' payload: '%s' querystring: '%s' myrange: '%s'"
+            , http_method, url, payload, querystring, myrange
         )
         if myrange:
             headers["Range"] = myrange
@@ -253,7 +236,6 @@ class Client:
                 headers=headers,
                 verify=self.verify,
                 timeout=self.timeout,
-                proxies=self.proxies,
             )
         elif querystring:
             response = requests.request(
@@ -263,7 +245,6 @@ class Client:
                 params=querystring,
                 verify=self.verify,
                 timeout=self.timeout,
-                proxies=self.proxies,
             )
         else:
             response = requests.request(
@@ -272,7 +253,6 @@ class Client:
                 headers=headers,
                 verify=self.verify,
                 timeout=self.timeout,
-                proxies=self.proxies,
             )
         return response
 
@@ -295,17 +275,17 @@ class Client:
         """
         if response.status_code == 500:
             error_msg = "PowerStore internal server error. Error details: " + str(
-                response.json()
+                response.json(),
             )
         elif response.status_code == 401:
             error_msg = "Access forbidden: Authentication required."
         elif response.status_code == 403:
             error_msg = "Not allowed - authorization failure. Error details: " + str(
-                response.json()
+                response.json(),
             )
         elif response.status_code == 404:
             error_msg = "Requested resource not found. Error details: " + str(
-                response.json()
+                response.json(),
             )
         elif response.status_code == 405:
             error_msg = (
@@ -321,7 +301,7 @@ class Client:
             )
         elif response.status_code == 415:
             error_msg = "Invalid request Content-Type. Error details: " + str(
-                response.json()
+                response.json(),
             )
         elif response.status_code == 416:
             error_msg = (
@@ -333,11 +313,12 @@ class Client:
             )
         elif response.status_code == 422:
             error_msg = "Request could not be completed. Error details: " + str(
-                response.json()
+                response.json(),
             )
         elif response.status_code == 503:
-            error_msg = "The service is temporarily unavailable. Error details: " + str(
-                response.json()
+            error_msg = (
+                "The service is temporarily unavailable. "
+                "Error details: " + str(response.json())
             )
         else:
             error_msg = str(response.json())
@@ -384,8 +365,9 @@ class Client:
         :rtype: dict or list of dict
         """
         try:
+
             response = self.fetch_response(
-                http_method, url, payload=payload, querystring=querystring
+                http_method, url, payload=payload, querystring=querystring,
             )
             try:
                 if self.is_valid_response(response):
@@ -402,12 +384,12 @@ class Client:
                     if all_pages and response.status_code == 206 and content_range:
                         # 'content-range': '0-99/789'
                         total_size = self.get_total_size_from_content_range(
-                            content_range
+                            content_range,
                         )
                         myranges = [
-                            "{0}-{1}".format(i, i + constants.MAX_LIMIT)
+                            f"{i}-{i + constants.MAX_LIMIT}"
                             for i in range(
-                                constants.OFFSET, total_size, constants.MAX_LIMIT
+                                constants.OFFSET, total_size, constants.MAX_LIMIT,
                             )
                         ]
                         for myrange in myranges:
@@ -425,34 +407,34 @@ class Client:
 
                     return response_json
                 self.raise_http_exception(response)
+                return None
 
             except ValueError as ex:
                 # its low-level or response level error caused by
                 # response.json() and not in requests.exceptions
                 error_msg = (
-                    "ValueError: '{0}' for Method: '{1}' URL: '{2}'"
-                    " PayLoad: '{3}' QueryString: '{4}'".format(
-                        str(ex), http_method, url, payload, querystring
-                    )
+                    f"ValueError: '{ex!s}' for Method: '{http_method}' URL: '{url}'"
+                    f" PayLoad: '{payload}' QueryString: '{querystring}'"
                 )
                 LOG.error(error_msg)
-                raise PowerStoreException(PowerStoreException.VALUE_ERROR, error_msg)
-        except socket.error as exception:
-            LOG.error(str(exception))
-            raise PowerStoreException(PowerStoreException.SOCKET_ERR, str(exception))
+                raise PowerStoreException(PowerStoreException.VALUE_ERROR, error_msg) from ex
         except SSLError as exception:
             LOG.error(str(exception))
-            raise PowerStoreException(PowerStoreException.SSL_ERROR, str(exception))
+            raise PowerStoreException(PowerStoreException.SSL_ERROR, str(exception)) from exception
         except ConnectionError as exception:
             LOG.error(str(exception))
             raise PowerStoreException(
-                PowerStoreException.CONNECTION_ERROR, str(exception)
-            )
+                PowerStoreException.CONNECTION_ERROR, str(exception),
+            ) from exception
         except TooManyRedirects as exception:
             LOG.error(str(exception))
             raise PowerStoreException(
-                PowerStoreException.TOO_MANY_REDIRECTS_ERROR, str(exception)
-            )
+                PowerStoreException.TOO_MANY_REDIRECTS_ERROR, str(exception),
+            ) from exception
         except Timeout as exception:
             LOG.error(str(exception))
-            raise PowerStoreException(PowerStoreException.TIMEOUT_ERROR, str(exception))
+            raise PowerStoreException(PowerStoreException.TIMEOUT_ERROR, str(exception)
+                                      ) from exception
+        except OSError as exception:
+            LOG.error(str(exception))
+            raise PowerStoreException(PowerStoreException.SOCKET_ERR, str(exception)) from exception
