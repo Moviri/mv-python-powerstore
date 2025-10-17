@@ -2,8 +2,6 @@
 
 """Module for establishing connection with PowerStore"""
 
-# pylint: disable=too-many-instance-attributes,too-many-arguments,too-many-positional-arguments,too-few-public-methods
-
 from PyPowerStore.configuration import Configuration
 from PyPowerStore.objects.file_dns import FileDNS
 from PyPowerStore.objects.file_interface import FileInterface
@@ -13,24 +11,14 @@ from PyPowerStore.objects.smb_server import SMBServer
 from PyPowerStore.objects.snmp_server import SNMPServer
 from PyPowerStore.protection import ProtectionFunctions
 from PyPowerStore.provisioning import Provisioning
-from PyPowerStore.metrics import MetricsFunctions
 
 
 class PowerStoreConn:
     """Class for establishing connection with PowerStore"""
-
-    def __init__(
-        self,
-        username,
-        password,
-        server_ip,
-        verify=False,
-        application_type=None,
-        timeout=None,
-        enable_log=False,
-        port_no=None,
-    ):
-        """Initializes PowerStoreConn Class
+    def __init__(self, username, password, server_ip, verify=False,
+                 application_type=None, timeout=None, enable_log=False,
+                 port_no=None, proxies=None):
+        """ Initializes PowerStoreConn Class
 
         :param username: array username
         :type username: str
@@ -50,22 +38,23 @@ class PowerStoreConn:
         :type enable_log: bool
         :type timeout: float
         """
-        self.provisioning = Provisioning(
-            server_ip,
-            username,
-            password,
-            verify,
-            application_type,
-            timeout,
-            enable_log=enable_log,
-            port_no=port_no,
-        )
-        self.protection = ProtectionFunctions(self.provisioning, enable_log=enable_log)
-        self.config_mgmt = Configuration(self.provisioning, enable_log=enable_log)
-        self.file_interface = FileInterface(self.provisioning, enable_log=enable_log)
-        self.smb_server = SMBServer(self.provisioning, enable_log=enable_log)
-        self.nfs_server = NFSServer(self.provisioning, enable_log=enable_log)
-        self.file_dns = FileDNS(self.provisioning, enable_log=enable_log)
-        self.file_nis = FileNIS(self.provisioning, enable_log=enable_log)
-        self.snmp_server = SNMPServer(self.provisioning, enable_log=enable_log)
-        self.metrics= MetricsFunctions(self.provisioning, enable_log=enable_log)
+        self.provisioning = Provisioning(server_ip, username, password,
+                                         verify, application_type, timeout,
+                                         enable_log=enable_log,
+                                         port_no=port_no, proxies=proxies)
+        self.protection = ProtectionFunctions(self.provisioning,
+                                              enable_log=enable_log)
+        self.config_mgmt = Configuration(self.provisioning,
+                                         enable_log=enable_log)
+        self.file_interface = FileInterface(self.provisioning,
+                                            enable_log=enable_log)
+        self.smb_server = SMBServer(self.provisioning,
+                                    enable_log=enable_log)
+        self.nfs_server = NFSServer(self.provisioning,
+                                    enable_log=enable_log)
+        self.file_dns = FileDNS(self.provisioning,
+                                enable_log=enable_log)
+        self.file_nis = FileNIS(self.provisioning,
+                                enable_log=enable_log)
+        self.snmp_server = SNMPServer(self.provisioning,
+                                      enable_log=enable_log)
