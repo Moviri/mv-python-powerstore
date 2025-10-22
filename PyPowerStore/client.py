@@ -2,6 +2,8 @@
 
 """Client module for PowerStore"""
 
+# pylint: disable=too-many-instance-attributes,too-many-arguments,too-many-positional-arguments,no-member,too-many-nested-blocks,too-many-branches,global-statement
+
 import base64
 import json
 import socket
@@ -201,6 +203,7 @@ class Client:
             self.timeout,
             self.proxies,
         )
+        global LOG # Reset LOG based on param
         LOG = helpers.get_logger(__name__, enable_log=enable_log)
 
     def fetch_response(
@@ -425,15 +428,14 @@ class Client:
 
                     return response_json
                 self.raise_http_exception(response)
+                return None
 
             except ValueError as ex:
                 # its low-level or response level error caused by
                 # response.json() and not in requests.exceptions
                 error_msg = (
-                    "ValueError: '{0}' for Method: '{1}' URL: '{2}'"
-                    " PayLoad: '{3}' QueryString: '{4}'".format(
-                        str(ex), http_method, url, payload, querystring
-                    )
+                    f"ValueError: '{ex!s}' for Method: '{http_method}' URL: '{url}'"
+                    f" PayLoad: '{payload}' QueryString: '{querystring}'"
                 )
                 LOG.error(error_msg)
                 raise PowerStoreException(PowerStoreException.VALUE_ERROR, error_msg)
