@@ -6,12 +6,12 @@ from setuptools import setup
 
 
 setup(name='mv-pypowerstore',
-      version='3.4.1.3',
+      version='3.4.1.4',
       description='Python Library for Dell PowerStore Modified by Moviri for use with Dynatrace extensions.',
       author='Moviri',
       author_email='dynatrace_extensions@moviri.com',
       install_requires=[
-        'urllib3>=1.26.7',
+        'urllib3>=2.6.3',
         'requests>=2.23.0'
       ],
       license_files = ('LICENSE',),
