@@ -9,7 +9,7 @@ from PyPowerStore.utils import constants, helpers
 LOG = helpers.get_logger(__name__)
 
 SELECT_ALL_FILE_DNS = {
-    "select": "id, nas_server_id, domain, ip_addresses, transport, nas_server(id,name), is_destination_override_enabled", # pylint: disable=line-too-long
+    "select": "id, nas_server_id, domain, ip_addresses, transport, nas_server(id,name), is_destination_override_enabled",  # pylint: disable=line-too-long
 }
 
 # File DNS endpoints
@@ -35,7 +35,7 @@ class FileDNS:
         self.provisioning = provisioning
         self.server_ip = provisioning.server_ip
         self.file_dns_client = provisioning.client
-        global LOG # Reset LOG based on param
+        global LOG  # Reset LOG based on param
         LOG = helpers.get_logger(__name__, enable_log=enable_log)
 
     # File DNS methods begin
@@ -52,7 +52,8 @@ class FileDNS:
         """
         LOG.info(
             "Getting file DNSs with filter: '%s' and all_pages: '%s'",
-                filter_dict, all_pages
+            filter_dict,
+            all_pages,
         )
         querystring = helpers.prepare_querystring(SELECT_ALL_FILE_DNS, filter_dict)
         LOG.info("Querystring: '%s'", querystring)
