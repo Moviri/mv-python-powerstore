@@ -36,7 +36,7 @@ class FileNIS:
         self.provisioning = provisioning
         self.server_ip = provisioning.server_ip
         self.file_nis_client = provisioning.client
-        global LOG # Reset LOG based on param
+        global LOG  # Reset LOG based on param
         LOG = helpers.get_logger(__name__, enable_log=enable_log)
 
     # File NIS methods begin
@@ -53,7 +53,8 @@ class FileNIS:
         """
         LOG.info(
             "Getting file NISs with filter: '%s' and all_pages: '%s'",
-                filter_dict, all_pages
+            filter_dict,
+            all_pages,
         )
         querystring = helpers.prepare_querystring(SELECT_ALL_FILE_NIS, filter_dict)
         LOG.info("Querystring: '%s'", querystring)

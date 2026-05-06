@@ -220,7 +220,7 @@ FHP_NAS_QUERYSTRING = {
     "current_unix_directory_service_l10n,"
     "file_interfaces(name,id,ip_address),"
     "nfs_servers,smb_servers,"
-    "file_ldaps,file_nises,file_systems(id,name)"
+    "file_ldaps,file_nises,file_systems(id,name),"
     "file_events_publishing_mode,"
     "is_replication_destination,"
     "is_production_mode_enabled,"
@@ -473,7 +473,7 @@ LDAP_DOMAIN_DETAILS_QUERY = {
     "group_search_path,group_search_level,ldap_server_type_l10n,protocol_l10n",
 }
 VIRTUAL_VOLUME_FHP_DETAILS_QUERY = {
-    "select": "id,name,size,type,usage_type,appliance_id,storage_container_id,io_priority,profile_id," # pylint: disable=line-too-long
+    "select": "id,name,size,type,usage_type,appliance_id,storage_container_id,io_priority,profile_id,"  # pylint: disable=line-too-long
     "replication_group_id,creator_type,is_readonly,migration_session_id,virtual_machine_uuid,"
     "family_id,parent_id,source_id,source_timestamp,creation_timestamp,naa_name,"
     "is_replication_destination,location_history,protection_policy_id,nsid,nguid,type_l10n,"
@@ -481,7 +481,7 @@ VIRTUAL_VOLUME_FHP_DETAILS_QUERY = {
     "host_virtual_volume_mappings(id,host_id,host_group_id,virtual_volume_id)",
 }
 VIRTUAL_VOLUME_DETAILS_QUERY = {
-    "select": "id,name,size,type,usage_type,appliance_id,storage_container_id,io_priority,profile_id," # pylint: disable=line-too-long
+    "select": "id,name,size,type,usage_type,appliance_id,storage_container_id,io_priority,profile_id,"  # pylint: disable=line-too-long
     "creator_type,is_readonly,migration_session_id,virtual_machine_uuid,"
     "family_id,parent_id,source_id,source_timestamp,creation_timestamp,"
     "location_history,type_l10n,usage_type_l10n,io_priority_l10n,creator_type_l10n,"
@@ -510,7 +510,7 @@ REPLICATION_GROUP_QUERY = {
 
 # LOGIN_SESSION details
 LOGIN_SESSION_DETAILS_QUERY = {
-    "select": "id,user,role_ids,is_password_change_required,is_built_in_user,idle_timeout", # pylint: disable=line-too-long
+    "select": "id,user,role_ids,is_password_change_required,is_built_in_user,idle_timeout",  # pylint: disable=line-too-long
 }
 
 # LDAP Account details
@@ -697,9 +697,6 @@ LOGOUT_URL = "https://{0}/api/rest/logout"
 # Login session endpoint
 LOGIN_SESSION = "https://{0}/api/rest/login_session"
 
-# Local_user endpoints
-GET_LOCAL_USER_LIST_URL = "https://{0}/api/rest/local_user"
-
 # IP Pool Address endpoint
 GET_IP_POOL_LIST_URL = "https://{0}/api/rest/ip_pool_address"
 
@@ -847,5 +844,4 @@ GET_STORAGE_CONTAINER_DESTINATION_DETAILS_URL = (
 CREATE_STORAGE_CONTAINER_DESTINATION_URL = GET_STORAGE_CONTAINER_DESTINATION_LIST_URL
 DELETE_STORAGE_CONTAINER_DESTINATION_URL = GET_STORAGE_CONTAINER_DESTINATION_DETAILS_URL
 
-GET_PERFORMANCE_METRICS_URL = (
-    "https://{""0}/api/rest/metrics/generate")
+GET_PERFORMANCE_METRICS_URL = "https://{0}/api/rest/metrics/generate"

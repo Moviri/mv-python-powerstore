@@ -18,10 +18,20 @@ from PyPowerStore.metrics import MetricsFunctions
 
 class PowerStoreConn:
     """Class for establishing connection with PowerStore"""
-    def __init__(self, username, password, server_ip, verify=False,
-                 application_type=None, timeout=None, enable_log=False,
-                 port_no=None, proxies=None):
-        """ Initializes PowerStoreConn Class
+
+    def __init__(
+        self,
+        username,
+        password,
+        server_ip,
+        verify=False,
+        application_type=None,
+        timeout=None,
+        enable_log=False,
+        port_no=None,
+        proxies=None,
+    ):
+        """Initializes PowerStoreConn Class
 
         :param username: array username
         :type username: str
@@ -60,4 +70,4 @@ class PowerStoreConn:
         self.file_dns = FileDNS(self.provisioning, enable_log=enable_log)
         self.file_nis = FileNIS(self.provisioning, enable_log=enable_log)
         self.snmp_server = SNMPServer(self.provisioning, enable_log=enable_log)
-        self.metrics= MetricsFunctions(self.provisioning, enable_log=enable_log)
+        self.metrics = MetricsFunctions(self.provisioning, enable_log=enable_log)
