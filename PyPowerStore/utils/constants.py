@@ -129,6 +129,8 @@ SELECT_ALL_VOL_GROUP = {
     "timestamp,"
     "is_protectable, protection_policy_id,"
     "protection_policy(name,id),"
+    "qos_performance_policy_id,"
+    "qos_performance_policy(id,name),"
     "migration_session_id,"
     "is_write_order_consistent,"
     "placement_rule,type,"
@@ -165,7 +167,8 @@ SELECT_ALL_FILESYSTEM = {
     "creator_type, filesystem_type_l10n,"
     "access_policy_l10n, locking_policy_l10n,"
     "folder_rename_policy_l10n, access_type_l10n,"
-    "creator_type_l10n,nas_server(name,id),"
+    "creator_type_l10n,is_secure,nas_server(name,id),"
+    "performance_policy_id,"
     "protection_policy(name,id)",
 }
 
@@ -187,11 +190,12 @@ SELECT_ALL_FILESYSTEM_PRIME = {
     "access_policy_l10n, locking_policy_l10n,"
     "folder_rename_policy_l10n, access_type_l10n,"
     "creator_type_l10n,nas_server(name,id),"
+    "performance_policy_id,"
     "protection_policy(name,id),"
     "file_events_publishing_mode,"
     "file_events_publishing_mode_l10n,"
     "config_type, config_type_l10n,flr_attributes,"
-    "host_io_size,host_io_size_l10n",
+    "is_secure,host_io_size,host_io_size_l10n",
 }
 
 FILESYSTEM_PRIME = [
@@ -216,6 +220,7 @@ FHP_NAS_QUERYSTRING = {
     "current_preferred_IPv4_interface_id,"
     "current_preferred_IPv6_interface_id,"
     "protection_policy_id,"
+    "performance_policy_id,"
     "operational_status_l10n,"
     "current_unix_directory_service_l10n,"
     "file_interfaces(name,id,ip_address),"
@@ -243,6 +248,7 @@ SELECT_ALL_NAS_SERVER = {
     "current_preferred_IPv6_interface_id,"
     "operational_status_l10n,"
     "current_unix_directory_service_l10n,"
+    "performance_policy_id,"
     "file_interfaces(name,id,ip_address),"
     "nfs_servers,smb_servers,"
     "file_ldaps,file_nises,file_systems(id,name)",
@@ -473,7 +479,7 @@ LDAP_DOMAIN_DETAILS_QUERY = {
     "group_search_path,group_search_level,ldap_server_type_l10n,protocol_l10n",
 }
 VIRTUAL_VOLUME_FHP_DETAILS_QUERY = {
-    "select": "id,name,size,type,usage_type,appliance_id,storage_container_id,io_priority,profile_id,"  # pylint: disable=line-too-long
+    "select": "id,name,size,type,usage_type,appliance_id,storage_container_id,io_priority,profile_id," # pylint: disable=line-too-long
     "replication_group_id,creator_type,is_readonly,migration_session_id,virtual_machine_uuid,"
     "family_id,parent_id,source_id,source_timestamp,creation_timestamp,naa_name,"
     "is_replication_destination,location_history,protection_policy_id,nsid,nguid,type_l10n,"
@@ -481,7 +487,7 @@ VIRTUAL_VOLUME_FHP_DETAILS_QUERY = {
     "host_virtual_volume_mappings(id,host_id,host_group_id,virtual_volume_id)",
 }
 VIRTUAL_VOLUME_DETAILS_QUERY = {
-    "select": "id,name,size,type,usage_type,appliance_id,storage_container_id,io_priority,profile_id,"  # pylint: disable=line-too-long
+    "select": "id,name,size,type,usage_type,appliance_id,storage_container_id,io_priority,profile_id," # pylint: disable=line-too-long
     "creator_type,is_readonly,migration_session_id,virtual_machine_uuid,"
     "family_id,parent_id,source_id,source_timestamp,creation_timestamp,"
     "location_history,type_l10n,usage_type_l10n,io_priority_l10n,creator_type_l10n,"
@@ -510,12 +516,29 @@ REPLICATION_GROUP_QUERY = {
 
 # LOGIN_SESSION details
 LOGIN_SESSION_DETAILS_QUERY = {
-    "select": "id,user,role_ids,is_password_change_required,is_built_in_user,idle_timeout",  # pylint: disable=line-too-long
+    "select": "id,user,role_ids,is_password_change_required,is_built_in_user,idle_timeout", # pylint: disable=line-too-long
 }
 
 # LDAP Account details
 LDAP_ACCOUNT_DETAILS_QUERY = {"select": "id,role_id,domain_id,name,type,type_l10n,dn"}
 # Select all Snapshot
+
+# IO Limit Rule query
+IO_LIMIT_RULE_DETAILS_QUERY = {
+    "select": "id,name,max_bw,max_iops,burst_percentage,type,type_l10n,policies(id,name)",
+}
+
+# File IO Limit Rule query
+FILE_IO_LIMIT_RULE_DETAILS_QUERY = {
+    "select": "id,name,max_bw,policies(id,name)",
+}
+
+# QoS / File_Performance Policy query
+QOS_POLICY_DETAILS_QUERY = {
+    "select": "id,name,description,type,type_l10n,"
+    "io_limit_rules(id,name),"
+    "file_io_limit_rules(id,name)",
+}
 
 EQUALS = "eq."
 
@@ -622,6 +645,18 @@ GET_REMOTE_APPLIANCE_URL = "https://{0}/api/rest/remote_system/{1}/query_applian
 # Protection Policy endpoint
 PROTECTION_POLICY_LIST_URL = "https://{0}/api/rest/policy"
 PROTECTION_POLICY_OBJECT_URL = "https://{0}/api/rest/policy/{1}"
+
+# IO Limit Rule endpoints (v4.0.0.0+)
+IO_LIMIT_RULE_LIST_URL = "https://{0}/api/rest/io_limit_rule"
+IO_LIMIT_RULE_OBJECT_URL = "https://{0}/api/rest/io_limit_rule/{1}"
+
+# File IO Limit Rule endpoints (v4.1.0.0+)
+FILE_IO_LIMIT_RULE_LIST_URL = "https://{0}/api/rest/file_io_limit_rule"
+FILE_IO_LIMIT_RULE_OBJECT_URL = "https://{0}/api/rest/file_io_limit_rule/{1}"
+
+# QoS Policy endpoints (reuses PROTECTION_POLICY_LIST/OBJECT URLs - same /policy endpoint)
+QOS_POLICY_TYPE_FILTER = {"type": EQUALS + "QoS"}
+FILE_PERFORMANCE_POLICY_TYPE_FILTER = {"type": EQUALS + "File_Performance"}
 
 # Host Volume Mapping endpoints
 HOST_VOLUME_MAPPING_URL = "https://{0}/api/rest/host_volume_mapping"

@@ -11,7 +11,6 @@ class MetricsFunctions:
     This class provides methods to retrieve performance metrics
     from PowerStore appliances.
     """
-
     def __init__(self, provisioning, enable_log=False):
         """Initializes MetricsFunctions Class
 
@@ -25,6 +24,7 @@ class MetricsFunctions:
         self.rest_client = provisioning.client
         self._enable_log = enable_log
         self._log = helpers.get_logger(__name__, enable_log=enable_log)
+
 
     def get_performance_metrics(self, entity, entity_id, interval):
         """Get performance metrics for the given entity.
@@ -41,11 +41,16 @@ class MetricsFunctions:
         :return: Performance metrics data
         :rtype: dict
         """
-        payload = {"entity": entity, "entity_id": entity_id, "interval": interval}
+        payload = {
+            "entity": entity,
+            "entity_id": entity_id,
+            "interval": interval
+        }
         return self.rest_client.request(
             constants.POST,
-            constants.GET_PERFORMANCE_METRICS_URL.format(self.server_ip),
-            payload=payload,
+            constants.GET_PERFORMANCE_METRICS_URL.format(
+                self.server_ip),
+            payload=payload
         )
 
     def is_logging_enabled(self):
