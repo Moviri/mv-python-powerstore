@@ -36,8 +36,7 @@ class AuthenticationManager:
         host=None,
         proxies=None,
     ):
-        """
-        Initializes AuthenticationManager
+        """Initializes AuthenticationManager
 
         :param username: array username
         :type username: str
@@ -198,16 +197,11 @@ class Client:
             self.timeout,
             self.proxies,
         )
-        global LOG  # Reset LOG based on param
+        global LOG # Reset LOG based on param
         LOG = helpers.get_logger(__name__, enable_log=enable_log)
 
     def fetch_response(
-        self,
-        http_method,
-        url,
-        payload=None,
-        querystring=None,
-        myrange=None,
+        self, http_method, url, payload=None, querystring=None, myrange=None,
     ):
         """Fetch & return the response based on request parameters.
 
@@ -241,12 +235,8 @@ class Client:
             headers.update(auth_headers)
 
         LOG.debug(
-            "Request's http_method: '%s' url: '%s' payload: '%s' querystring: '%s' myrange: '%s'",
-            http_method,
-            url,
-            payload,
-            querystring,
-            myrange,
+            "Request's http_method: '%s' url: '%s' payload: '%s' querystring: '%s' myrange: '%s'"
+            , http_method, url, payload, querystring, myrange
         )
         if myrange:
             headers["Range"] = myrange
@@ -342,8 +332,9 @@ class Client:
                 response.json(),
             )
         elif response.status_code == 503:
-            error_msg = "The service is temporarily unavailable. Error details: " + str(
-                response.json()
+            error_msg = (
+                "The service is temporarily unavailable. "
+                "Error details: " + str(response.json())
             )
         else:
             error_msg = str(response.json())
@@ -390,11 +381,9 @@ class Client:
         :rtype: dict or list of dict
         """
         try:
+
             response = self.fetch_response(
-                http_method,
-                url,
-                payload=payload,
-                querystring=querystring,
+                http_method, url, payload=payload, querystring=querystring,
             )
             try:
                 if self.is_valid_response(response):
@@ -416,9 +405,7 @@ class Client:
                         myranges = [
                             f"{i}-{i + constants.MAX_LIMIT}"
                             for i in range(
-                                constants.OFFSET,
-                                total_size,
-                                constants.MAX_LIMIT,
+                                constants.OFFSET, total_size, constants.MAX_LIMIT,
                             )
                         ]
                         for myrange in myranges:
@@ -446,33 +433,24 @@ class Client:
                     f" PayLoad: '{payload}' QueryString: '{querystring}'"
                 )
                 LOG.error(error_msg)
-                raise PowerStoreException(
-                    PowerStoreException.VALUE_ERROR, error_msg
-                ) from ex
+                raise PowerStoreException(PowerStoreException.VALUE_ERROR, error_msg) from ex
         except SSLError as exception:
             LOG.error(str(exception))
-            raise PowerStoreException(
-                PowerStoreException.SSL_ERROR, str(exception)
-            ) from exception
+            raise PowerStoreException(PowerStoreException.SSL_ERROR, str(exception)) from exception
         except ConnectionError as exception:
             LOG.error(str(exception))
             raise PowerStoreException(
-                PowerStoreException.CONNECTION_ERROR,
-                str(exception),
+                PowerStoreException.CONNECTION_ERROR, str(exception),
             ) from exception
         except TooManyRedirects as exception:
             LOG.error(str(exception))
             raise PowerStoreException(
-                PowerStoreException.TOO_MANY_REDIRECTS_ERROR,
-                str(exception),
+                PowerStoreException.TOO_MANY_REDIRECTS_ERROR, str(exception),
             ) from exception
         except Timeout as exception:
             LOG.error(str(exception))
-            raise PowerStoreException(
-                PowerStoreException.TIMEOUT_ERROR, str(exception)
-            ) from exception
+            raise PowerStoreException(PowerStoreException.TIMEOUT_ERROR, str(exception)
+                                      ) from exception
         except OSError as exception:
             LOG.error(str(exception))
-            raise PowerStoreException(
-                PowerStoreException.SOCKET_ERR, str(exception)
-            ) from exception
+            raise PowerStoreException(PowerStoreException.SOCKET_ERR, str(exception)) from exception

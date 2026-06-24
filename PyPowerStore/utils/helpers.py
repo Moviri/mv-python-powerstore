@@ -22,7 +22,7 @@ def set_provisioning_obj(val):
     :return: None
     :rtype: None
     """
-    global PROVISIONING_OBJ  # Reset PROVISIONING_OBJ based on param
+    global PROVISIONING_OBJ # Reset PROVISIONING_OBJ based on param
     PROVISIONING_OBJ = val
 
 
@@ -166,7 +166,8 @@ def filtered_details(filterable_keys, filter_dict, resource_list, resource_name)
 
 
 def apply_operators(filter_dict, key, resource, count):
-    """Returns the count for the filters applied on the keys"""
+    """Returns the count for the filters applied on the keys
+    """
     split_list = filter_dict[key].split(".")
     if len(split_list) > 2:
         search_string = ""
@@ -176,14 +177,12 @@ def apply_operators(filter_dict, key, resource, count):
             else:
                 search_string += str(split_list[item] + ".")
 
-        if (split_list[0] == "eq" and str(resource[key]) == search_string) or (
-            split_list[0] == "neq" and str(resource[key]) != search_string
-        ):
+        if (split_list[0] == "eq" and str(resource[key]) == search_string) or \
+            (split_list[0] == "neq" and str(resource[key]) != search_string):
             count += 1
 
-    if (split_list[0] == "eq" and str(resource[key]) == str(split_list[1])) or (
-        split_list[0] == "neq" and str(resource[key]) != str(split_list[1])
-    ):
+    if (split_list[0] == "eq" and str(resource[key]) == str(split_list[1])) or \
+        (split_list[0] == "neq" and str(resource[key]) != str(split_list[1])):
         count += 1
     elif split_list[0] == "ilike":
         if not isinstance(resource[key], str):
@@ -195,14 +194,11 @@ def apply_operators(filter_dict, key, resource, count):
         search_val = split_list[1].replace("*", "")
         value = resource[key]
         if (
-            (
-                split_list[1].startswith("*")
-                and split_list[1].endswith("*")
-                and value.count(search_val) > 0
-            )
-            or (split_list[1].startswith("*") and value.endswith(search_val))
-            or value.startswith(search_val)
-        ):
+            split_list[1].startswith("*")
+            and split_list[1].endswith("*")
+            and value.count(search_val) > 0
+        ) or (split_list[1].startswith("*") and value.endswith(search_val)) or \
+            value.startswith(search_val):
             count += 1
     elif split_list[0] == "gt":
         if not isinstance(resource[key], (int, float)):

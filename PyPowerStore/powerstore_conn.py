@@ -70,4 +70,4 @@ class PowerStoreConn:
         self.file_dns = FileDNS(self.provisioning, enable_log=enable_log)
         self.file_nis = FileNIS(self.provisioning, enable_log=enable_log)
         self.snmp_server = SNMPServer(self.provisioning, enable_log=enable_log)
-        self.metrics = MetricsFunctions(self.provisioning, enable_log=enable_log)
+        self.metrics= MetricsFunctions(self.provisioning, enable_log=enable_log)
