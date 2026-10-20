@@ -15,7 +15,7 @@ class PowerStoreException(Exception):
     VALUE_ERROR = 7
 
     def __init__(self, err_code, err_text, status_code=None):
-        Exception.__init__(self)
+        Exception.__init__(self, err_code, err_text, status_code)
         self.err_code = err_code
         self.err_text = err_text
         self.status_code = status_code

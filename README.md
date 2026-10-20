@@ -4,7 +4,7 @@ PyPowerStore is a python library which lets you manage Dell PowerStore.
 
 ## Installation
 
-### PyPowerStore can be installed from pypi.org using below mentioned command:
+### PyPowerStore can be installed from pypi.org using below-mentioned command:
         
         pip install PyPowerStore==<pypowerstore_version>
 
